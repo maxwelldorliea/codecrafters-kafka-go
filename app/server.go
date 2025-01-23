@@ -14,7 +14,6 @@ func main() {
 	// You can use print statements as follows for debugging, they'll be visible when running tests.
 	fmt.Println("Logs from your program will appear here!")
 
-	correlationId := []byte{0, 0, 0, 0, 0, 0, 0, 7}
 	l, err := net.Listen("tcp", "0.0.0.0:9092")
 	if err != nil {
 		fmt.Println("Failed to bind to port 9092")
@@ -25,7 +24,10 @@ func main() {
 		fmt.Println("Error accepting connection: ", err.Error())
 		os.Exit(1)
 	}
-	conn.Write(correlationId)
+	out := make([]byte, 1024)
+	conn.Read(out)
+	conn.Write([]byte{0, 0, 0, 0})
+	conn.Write(out[8:12])
 	conn.Close()
 
 }
